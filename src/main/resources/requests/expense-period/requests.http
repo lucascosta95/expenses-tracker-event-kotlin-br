@@ -1,0 +1,46 @@
+@baseUrl = http://localhost:8080/api/expenses
+@expenseId = 1
+@month = 2025-03-19T00:00:00Z
+
+### Listar todas as despesas por mês
+GET {{baseUrl}}?month={{month}}
+Accept: application/json
+
+### Obter uma despesa por ID
+GET {{baseUrl}}/{{expenseId}}
+Accept: application/json
+
+### Criar uma nova despesa
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "name": "Aluguel",
+  "reserved": 900,
+  "spent": 0,
+  "methodId": 1,
+  "referenceMonth": "{{month}}"
+}
+
+### Atualizar uma despesa por ID
+PUT {{baseUrl}}/{{expenseId}}
+Content-Type: application/json
+
+{
+  "name": "Teste Despesa - Atualizada",
+  "reserved": 1500.00,
+  "spent": 0,
+  "methodId": 1,
+  "referenceMonth": "{{month}}"
+}
+
+### Copiar despesas do mês anterior
+POST {{baseUrl}}/copy-previous-month
+Content-Type: application/json
+
+{
+  "currentMonth": "{{month}}"
+}
+
+### Deletar uma despesa por ID
+DELETE {{baseUrl}}/{{expenseId}}

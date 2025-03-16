@@ -1,0 +1,5 @@
+@baseUrl = http://localhost:8080/api/payment-methods
+
+### Listar todos os meios de pagamento
+GET {{baseUrl}}
+Accept: application/json

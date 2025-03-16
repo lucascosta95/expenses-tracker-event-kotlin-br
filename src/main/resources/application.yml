@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: expenses-tracker-event-kotlin-br
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      max-lifetime: 1800000
+      keepalive-time: 300000
+      connection-timeout: 20000
+      data-source-properties:
+        cachePrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+sentry:
+  dsn: ${SENTRY_DSN}
+  traces-sample-rate: 1.0
+  environment: production
+  release: 1.0.0
+  enabled: ${SENTRY_ENABLED}
