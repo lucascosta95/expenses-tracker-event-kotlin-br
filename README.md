@@ -44,3 +44,8 @@ Este repositório foi criado para apoiar a apresentação "Kotlin sem jeitão de
 
 📅 Data do evento: (19/03/2025 - 20:00 as 22:00)
 📍 Local: On-line
+
+## 🔍 Apresentador e Facilitador
+
+👨‍💻 Apresentador: [Lucas Fugisawar](https://github.com/lucasfugisawa)
+👨‍🏫 Facilitador: [Lucas Costa](https://github.com/lucascosta95)
