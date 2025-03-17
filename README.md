@@ -47,5 +47,5 @@ Este repositório foi criado para apoiar a apresentação "Kotlin sem jeitão de
 
 ## 🔍 Apresentador e Facilitador
 
-👨‍💻 Apresentador: [Lucas Fugisawar](https://github.com/lucasfugisawa)
+👨‍💻 Apresentador: [Lucas Fugisawa](https://github.com/lucasfugisawa)
 👨‍🏫 Facilitador: [Lucas Costa](https://github.com/lucascosta95)
