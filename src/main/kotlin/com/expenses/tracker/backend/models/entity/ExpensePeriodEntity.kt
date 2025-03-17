@@ -5,12 +5,12 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "expense_period")
-data class ExpensePeriodEntity(
+class ExpensePeriodEntity(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0,
+    val id: Long? = null,
 
     @Column(name = "expense_id")
-    val expenseId: Long,
+    val expenseId: Long?,
 
     var name: String,
 
@@ -26,4 +26,17 @@ data class ExpensePeriodEntity(
 
     var reserved: Double,
     var spent: Double
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ExpensePeriodEntity
+
+        return id == other.id
+    }
+
+    override fun hashCode(): Int {
+        return id?.hashCode() ?: 0
+    }
+}

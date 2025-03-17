@@ -3,7 +3,7 @@ package com.expenses.tracker.backend.models.response
 import java.time.LocalDateTime
 
 data class ExpensePeriod(
-    val id: Long,
+    val id: Long?,
     val name: String,
     val method: PaymentMethod?,
     val methodId: Long,

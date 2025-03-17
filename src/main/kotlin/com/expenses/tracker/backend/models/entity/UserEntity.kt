@@ -4,13 +4,26 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "user")
-data class UserEntity(
+class UserEntity(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0,
+    val id: Long? = null,
 
     val name: String,
     val email: String,
 
     @Column(name = "hash_password")
     val hashPassword: String
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as UserEntity
+
+        return id == other.id
+    }
+
+    override fun hashCode(): Int {
+        return id?.hashCode() ?: 0
+    }
+}
