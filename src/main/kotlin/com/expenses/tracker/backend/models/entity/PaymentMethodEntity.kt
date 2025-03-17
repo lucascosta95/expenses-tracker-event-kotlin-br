@@ -8,7 +8,7 @@ import jakarta.persistence.*
 @Table(name = "payment_method")
 data class PaymentMethodEntity(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0,
+    val id: Long? = null,
 
     var name: String,
 

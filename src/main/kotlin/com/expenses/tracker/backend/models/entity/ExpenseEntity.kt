@@ -7,7 +7,7 @@ import jakarta.persistence.*
 data class ExpenseEntity(
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0,
+    val id: Long? = null,
 
     var name: String,
 

@@ -47,20 +47,21 @@ class ExpensePeriodService(
         }
 
         if (updateExpensePeriod.updateRecurrence) {
+            val expenseId = expensePeriod.expenseId ?: throw NotFoundException("Expense ID is null")
+
             expenseRepository.save(
                 updateExpenseEntity(
-                    expenseRepository.findById(expensePeriod.expenseId).get(),
+                    expenseRepository.findById(expenseId).get(),
                     updateExpensePeriod
                 )
             )
 
-            val eps = expensePeriodRepository.findAllByExpenseId(expensePeriod.expenseId)
+            val eps = expensePeriodRepository.findAllByExpenseId(expenseId)
                 .filter { it.referenceMonth > updateExpensePeriod.referenceMonth }
                 .map { updateExpensePeriodEntity(it, updateExpensePeriod) }
 
             if (eps.isNotEmpty())
                 expensePeriodRepository.saveAll(eps)
-
         }
 
         expensePeriod = updateExpensePeriodEntity(expensePeriod, updateExpensePeriod)
@@ -127,6 +128,7 @@ class ExpensePeriodService(
             )
         }
 
+        if (expensePeriod.expenseId == null) throw NotFoundException("Expense ID is null")
         val eps = expensePeriodRepository.findAllByExpenseId(expensePeriod.expenseId)
         if (eps.size == 1) {
             expensePeriodRepository.deleteById(id)

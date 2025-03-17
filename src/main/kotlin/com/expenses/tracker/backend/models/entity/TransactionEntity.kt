@@ -10,7 +10,7 @@ import java.time.LocalDate
 data class TransactionEntity(
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0,
+    val id: Long? = null,
 
     @Convert(converter = TransactionTypeEnumConverter::class)
     val type: TransactionTypeEnum,

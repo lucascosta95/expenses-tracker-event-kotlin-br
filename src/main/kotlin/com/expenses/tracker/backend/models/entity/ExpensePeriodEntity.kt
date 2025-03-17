@@ -7,10 +7,10 @@ import java.time.LocalDateTime
 @Table(name = "expense_period")
 data class ExpensePeriodEntity(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0,
+    val id: Long? = null,
 
     @Column(name = "expense_id")
-    val expenseId: Long,
+    val expenseId: Long?,
 
     var name: String,
 
