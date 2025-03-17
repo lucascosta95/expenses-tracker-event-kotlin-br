@@ -6,7 +6,7 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "payment_method")
-data class PaymentMethodEntity(
+class PaymentMethodEntity(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
@@ -17,4 +17,17 @@ data class PaymentMethodEntity(
 
     @Convert(converter = PaymentMethodTypeEnumConverter::class)
     var methodType: PaymentMethodTypeEnum?
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as PaymentMethodEntity
+
+        return id == other.id
+    }
+
+    override fun hashCode(): Int {
+        return id?.hashCode() ?: 0
+    }
+}
