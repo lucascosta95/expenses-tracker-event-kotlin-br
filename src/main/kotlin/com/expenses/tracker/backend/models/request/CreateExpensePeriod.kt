@@ -7,5 +7,5 @@ data class CreateExpensePeriod(
     val reserved: Double,
     val spent: Double,
     val methodId: Long,
-    val referenceMonth: LocalDateTime
+    val referenceMonth: LocalDateTime,
 )

@@ -4,18 +4,12 @@ import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.time.temporal.TemporalAdjusters
 
-object DateUtils {
-    fun truncateToStartOfMonth(date: ZonedDateTime?): LocalDateTime {
-        return truncateToStartOfMonth(date?.toLocalDateTime())
-    }
+val ZonedDateTime.start get(): LocalDateTime =
+    toLocalDateTime().start
 
-    fun truncateToStartOfMonth(date: LocalDateTime?): LocalDateTime {
-        requireNotNull(date) { "The date cannot be null." }
-
-        return date.with(TemporalAdjusters.firstDayOfMonth())
-            .withHour(0)
-            .withMinute(0)
-            .withSecond(0)
-            .withNano(0)
-    }
-}
+val LocalDateTime.start: LocalDateTime get() =
+    with(TemporalAdjusters.firstDayOfMonth())
+        .withHour(0)
+        .withMinute(0)
+        .withSecond(0)
+        .withNano(0)

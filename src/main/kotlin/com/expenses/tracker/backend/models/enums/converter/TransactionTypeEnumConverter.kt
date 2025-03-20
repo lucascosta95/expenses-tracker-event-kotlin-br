@@ -6,11 +6,11 @@ import jakarta.persistence.Converter
 
 @Converter(autoApply = true)
 class TransactionTypeEnumConverter : AttributeConverter<TransactionTypeEnum, String> {
-    override fun convertToDatabaseColumn(attribute: TransactionTypeEnum?): String? {
-        return attribute?.code
-    }
+    override fun convertToDatabaseColumn(attribute: TransactionTypeEnum?): String? =
+        attribute?.code
 
-    override fun convertToEntityAttribute(dbData: String?): TransactionTypeEnum? {
-        return TransactionTypeEnum.entries.find { it.code == dbData }
-    }
+    override fun convertToEntityAttribute(dbData: String?): TransactionTypeEnum? =
+        TransactionTypeEnum
+            .entries
+            .find { it.code == dbData }
 }

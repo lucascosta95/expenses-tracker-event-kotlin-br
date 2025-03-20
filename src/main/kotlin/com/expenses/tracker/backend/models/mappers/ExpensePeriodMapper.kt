@@ -4,34 +4,25 @@ import com.expenses.tracker.backend.models.entity.ExpenseEntity
 import com.expenses.tracker.backend.models.entity.ExpensePeriodEntity
 import com.expenses.tracker.backend.models.request.CreateExpensePeriod
 import com.expenses.tracker.backend.models.response.ExpensePeriod
-import com.expenses.tracker.backend.utils.DateUtils
+import com.expenses.tracker.backend.utils.start
 
-object ExpensePeriodMapper {
+fun ExpensePeriodEntity.toResponse(): ExpensePeriod = ExpensePeriod(
+    id = id,
+    name = name,
+    reserved = reserved,
+    spent = spent,
+    method = method?.toResponse(),
+    methodId = methodId,
+    referenceMonth = referenceMonth,
+)
 
-    fun toResponse(entity: ExpensePeriodEntity): ExpensePeriod = ExpensePeriod(
-        id = entity.id,
-        name = entity.name,
-        reserved = entity.reserved,
-        spent = entity.spent,
-        method = entity.method?.let { PaymentMethodMapper.toResponse(it) },
-        methodId = entity.methodId,
-        referenceMonth = entity.referenceMonth
-    )
+fun List<ExpensePeriodEntity>.toResponse(): List<ExpensePeriod> = map { it.toResponse() }
 
-    fun toResponse(entities: List<ExpensePeriodEntity>): List<ExpensePeriod> = entities.map { toResponse(it) }
-
-    fun createExpensePeriodToExpensePeriodEntity(
-        createExpensePeriod: CreateExpensePeriod,
-        expense: ExpenseEntity
-    ): ExpensePeriodEntity {
-        return ExpensePeriodEntity(
-            expenseId = expense.id,
-            name = createExpensePeriod.name,
-            reserved = createExpensePeriod.reserved,
-            spent = createExpensePeriod.spent,
-            methodId = createExpensePeriod.methodId,
-            referenceMonth = DateUtils.truncateToStartOfMonth(createExpensePeriod.referenceMonth)
-        )
-    }
-
-}
+fun CreateExpensePeriod.toEntity(expense: ExpenseEntity): ExpensePeriodEntity = ExpensePeriodEntity(
+    expenseId = expense.id,
+    name = name,
+    reserved = reserved,
+    spent = spent,
+    methodId = methodId,
+    referenceMonth = referenceMonth.start,
+)

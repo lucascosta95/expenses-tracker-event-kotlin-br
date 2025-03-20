@@ -9,5 +9,5 @@ data class UpdateExpensePeriod(
     val spent: Double,
     val methodId: Long,
     val referenceMonth: LocalDateTime,
-    val updateRecurrence: Boolean
+    val updateRecurrence: Boolean,
 )

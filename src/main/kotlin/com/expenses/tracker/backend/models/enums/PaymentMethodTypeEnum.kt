@@ -1,10 +1,10 @@
 package com.expenses.tracker.backend.models.enums
 
 enum class PaymentMethodTypeEnum(val code: String) {
-    PIX("P"),
+    BRADESCO("B"),
     CASH("D"),
     DEBITCARD("A"),
-    SANTANDER("S"),
     NUBANK("N"),
-    BRADESCO("B");
+    PIX("P"),
+    SANTANDER("S"),
 }

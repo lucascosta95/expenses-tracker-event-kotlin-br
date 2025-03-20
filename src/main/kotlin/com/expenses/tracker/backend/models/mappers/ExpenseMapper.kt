@@ -3,14 +3,11 @@ package com.expenses.tracker.backend.models.mappers
 import com.expenses.tracker.backend.models.entity.ExpenseEntity
 import com.expenses.tracker.backend.models.request.CreateExpensePeriod
 
-object ExpenseMapper {
+private const val DEFAULT_SPENT_VALUE = 0.0
 
-    fun createExpensePeriodToExpense(expensePeriod: CreateExpensePeriod): ExpenseEntity {
-        return ExpenseEntity(
-            name = expensePeriod.name,
-            reserved = expensePeriod.reserved,
-            spent = 0.0,
-            methodId = expensePeriod.methodId
-        )
-    }
-}
+fun CreateExpensePeriod.toEntity(): ExpenseEntity = ExpenseEntity(
+    name = name,
+    reserved = reserved,
+    spent = DEFAULT_SPENT_VALUE,
+    methodId = methodId,
+)

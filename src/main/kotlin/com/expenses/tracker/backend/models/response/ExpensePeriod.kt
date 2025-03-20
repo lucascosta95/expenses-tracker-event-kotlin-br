@@ -9,5 +9,5 @@ data class ExpensePeriod(
     val methodId: Long,
     val referenceMonth: LocalDateTime,
     val reserved: Double,
-    val spent: Double
+    val spent: Double,
 )
