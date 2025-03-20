@@ -15,7 +15,6 @@ import com.expenses.tracker.backend.repository.PaymentMethodRepository
 import com.expenses.tracker.backend.utils.start
 import org.springframework.stereotype.Service
 import java.time.ZonedDateTime
-import kotlin.jvm.optionals.getOrElse
 import kotlin.jvm.optionals.getOrNull
 
 @Service
@@ -43,26 +42,24 @@ class ExpensePeriodService(
             ?: throw NotFoundException("Expense period with ID $id not found")
 
         if (updateExpensePeriod.updateRecurrence) {
-            val expenseId = expensePeriod.expenseId ?: throw IllegalStateException("Expense ID is null")
+            val expenseId = expensePeriod.expenseId
+                ?: throw IllegalStateException("Expense ID is null")
 
             expenseRepository
                 .findById(expenseId)
                 .getOrNull()
-                ?.let { updateExpenseEntity(it, updateExpensePeriod) }
+                ?.update(updateExpensePeriod)
                 ?.let(expenseRepository::save)
 
             expensePeriodRepository
                 .findAllByExpenseId(expenseId)
                 .filter { it.referenceMonth > updateExpensePeriod.referenceMonth }
-                .map { updateExpensePeriodEntity(it, updateExpensePeriod) }
+                .map { it.update(updateExpensePeriod) }
                 .takeIf { it.isNotEmpty() }
-                ?.let { expensePeriodRepository.saveAll(it) }
-
+                ?.let(expensePeriodRepository::saveAll)
         }
 
-        expensePeriod = updateExpensePeriodEntity(expensePeriod, updateExpensePeriod)
-        expensePeriod.spent = updateExpensePeriod.spent
-        expensePeriod.referenceMonth = updateExpensePeriod.referenceMonth.start
+        expensePeriod = expensePeriod.update(updateExpensePeriod)
 
         return expensePeriodRepository
             .save(expensePeriod)
@@ -72,7 +69,8 @@ class ExpensePeriodService(
     fun create(createExpensePeriod: CreateExpensePeriod): ExpensePeriod {
         paymentMethodRepository
             .findById(createExpensePeriod.methodId)
-            .getOrElse { throw NotFoundException("Payment method with ID ${createExpensePeriod.methodId} not found") }
+            .getOrNull()
+            ?: throw NotFoundException("Payment method with ID ${createExpensePeriod.methodId} not found")
 
         return createExpensePeriod
             .toEntity()
@@ -84,70 +82,63 @@ class ExpensePeriodService(
 
     fun copyPreviousMonth(copyPreviousMonth: CopyPreviousMonth): List<ExpensePeriod> {
         val currentMonth = copyPreviousMonth.currentMonth.start
-        val currentExpensesMap = expensePeriodRepository
-            .findAllByReferenceMonth(currentMonth)
-            .associateBy { it.expenseId }
-            .toMutableMap()
-
         val previousMonth = currentMonth.minusMonths(1)
+
+        val currentExpenses = expensePeriodRepository
+            .findAllByReferenceMonth(currentMonth)
+            .associateByTo(mutableMapOf()) { it.expenseId }
+
         val expensesToSave = expensePeriodRepository
             .findAllByReferenceMonth(previousMonth)
-            .map {
-                currentExpensesMap.getOrPut(it.expenseId) {
+            .map { previousPeriod ->
+                currentExpenses.getOrPut(previousPeriod.expenseId) {
                     ExpensePeriodEntity(
-                        name = it.name,
-                        expenseId = it.expenseId,
-                        methodId = it.methodId,
-                        reserved = it.reserved,
+                        name = previousPeriod.name,
+                        expenseId = previousPeriod.expenseId,
+                        methodId = previousPeriod.methodId,
+                        reserved = previousPeriod.reserved,
                         spent = 0.0,
                         referenceMonth = currentMonth
                     )
                 }.apply {
-                    name = it.name
-                    methodId = it.methodId
-                    reserved = it.reserved
+                    name = previousPeriod.name
+                    methodId = previousPeriod.methodId
+                    reserved = previousPeriod.reserved
                 }
             }
 
-        if (expensesToSave.isEmpty()) {
-            return emptyList()
-        }
-
-        return expensePeriodRepository
-            .saveAll(expensesToSave)
-            .toResponse()
+        return expensePeriodRepository.saveAll(expensesToSave).toResponse()
+            .takeIf { it.isNotEmpty() }
+            ?: emptyList()
     }
 
     fun deleteById(id: Long) {
         val expensePeriod = expensePeriodRepository
             .findById(id)
-            .getOrElse { throw NotFoundException("Expense period with ID $id not found") }
+            .getOrNull()
+            ?: throw NotFoundException("Expense period with ID $id not found")
 
-        expensePeriod.expenseId ?: throw IllegalStateException("Expense ID is null")
+        val expenseId = expensePeriod.expenseId ?: throw IllegalStateException("Expense ID is null")
 
-        val eps = expensePeriodRepository.findAllByExpenseId(expensePeriod.expenseId)
+        val eps = expensePeriodRepository.findAllByExpenseId(expenseId)
 
         expensePeriodRepository.deleteById(id)
         if (eps.size == 1) {
-            expenseRepository.deleteById(expensePeriod.expenseId)
+            expenseRepository.deleteById(expenseId)
         }
     }
+}
 
-    private fun updateExpenseEntity(
-        expense: ExpenseEntity,
-        updateExpensePeriod: UpdateExpensePeriod
-    ): ExpenseEntity = expense.apply {
-        name = updateExpensePeriod.name
-        methodId = updateExpensePeriod.methodId
-        reserved = updateExpensePeriod.reserved
-    }
+private fun ExpenseEntity.update(updateExpensePeriod: UpdateExpensePeriod): ExpenseEntity = apply {
+    name = updateExpensePeriod.name
+    methodId = updateExpensePeriod.methodId
+    reserved = updateExpensePeriod.reserved
+}
 
-    private fun updateExpensePeriodEntity(
-        expensePeriod: ExpensePeriodEntity,
-        updateExpensePeriod: UpdateExpensePeriod
-    ): ExpensePeriodEntity = expensePeriod.apply {
-        name = updateExpensePeriod.name
-        methodId = updateExpensePeriod.methodId
-        reserved = updateExpensePeriod.reserved
-    }
+private fun ExpensePeriodEntity.update(updateExpensePeriod: UpdateExpensePeriod): ExpensePeriodEntity = apply {
+    name = updateExpensePeriod.name
+    methodId = updateExpensePeriod.methodId
+    reserved = updateExpensePeriod.reserved
+    spent = updateExpensePeriod.spent
+    referenceMonth = updateExpensePeriod.referenceMonth.start
 }
